@@ -1,17 +1,17 @@
-# SE-Program-ScholarLinkAI
+# ScholarLink AI - Backend
 
-### 本地部署Mysql数据库教程（建数据库的时候把数据库的密码设置成111111，用户是root）
-https://zhuanlan.zhihu.com/p/654087404
+这是 ScholarLink AI 项目的后端服务。该项目旨在通过大模型与向量检索技术，提供智能化的学术论文管理与推荐服务。
 
-### 数据库字段设计
+## 🛠 技术栈
+* **框架:** Python 3.x + Flask + Flask-RESTX (Swagger UI)
+* **数据库:** MySQL + SQLAlchemy ORM
+* **配置管理:** YAML + 环境变量
 
-#### 元数据数据库
+## 🚀 快速启动
 
-表1：papers
-paper_id, abstract, pdf_url, title, author
-
-表2：users
-user_id, username, password, interest
-
-表3：recommendations
-user_id, paper_id, blog
+### 1. 环境准备
+确保已安装 Python 3.8+，并创建虚拟环境：
+```bash
+python -m venv venv
+source venv/bin/activate  # Windows 用户使用 venv\Scripts\activate
+pip install -r requirements.txt
