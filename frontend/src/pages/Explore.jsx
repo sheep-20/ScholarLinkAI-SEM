@@ -7,6 +7,22 @@ const truncate = (text = '', len = 120) => {
   return text.length > len ? `${text.slice(0, len)}...` : text
 }
 
+
+export async function fetchPaperList({ page = 1, pageSize = 20 } = {}) {
+  const params = new URLSearchParams()
+  params.append('page', String(page))
+  params.append('page_size', String(pageSize))
+
+  const res = await fetch(`http://localhost:3001/papers/list?${params.toString()}`)
+  const data = await res.json()
+
+  if (!res.ok || data?.status !== 'success') {
+    throw new Error(data?.message || `请求论文列表失败: ${res.status}`)
+  }
+
+  return data.data
+}
+
 const Explore = () => {
   const navigate = useNavigate()
   const [blogs, setBlogs] = useState([])
