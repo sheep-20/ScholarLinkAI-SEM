@@ -1,17 +1,15 @@
-/* App 外层容器：纵向布局，撑满可视高度 */
 .App {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* 主内容区：给固定 Header 预留顶部空间 */
 .main-content {
   flex: 1;
   padding-top: 80px; /* 为固定头部留出空间 */
 }
 
-/* 小屏适配：适当减少顶部留白 */
+/* 响应式设计 */
 @media (max-width: 768px) {
   .main-content {
     padding-top: 70px;

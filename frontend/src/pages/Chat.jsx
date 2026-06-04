@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
-import "./Chat.css";
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+import './Chat.css';
 
 const Chat = () => {
   const { recommendationId } = useParams();
   const navigate = useNavigate();
   const [chatHistory, setChatHistory] = useState([]);
   const [paperInfo, setPaperInfo] = useState(null);
-  const [newMessage, setNewMessage] = useState("");
+  const [newMessage, setNewMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
   const messagesEndRef = useRef(null);
@@ -29,22 +29,19 @@ const Chat = () => {
 
   const loadChatHistory = async () => {
     try {
-      // 根据 recommendationId 拉取历史对话与论文基础信息
       setIsLoadingHistory(true);
-      const response = await fetch(
-        `http://localhost:3001/chat/history/${recommendationId}`,
-      );
+      const response = await fetch(`http://localhost:3001/chat/history/${recommendationId}`);
       const data = await response.json();
 
-      if (data.status === "success") {
+      if (data.status === 'success') {
         setChatHistory(data.data.chat_history);
         setPaperInfo(data.data.paper_info);
       } else {
-        alert("加载对话历史失败：" + data.message);
+        alert('加载对话历史失败：' + data.message);
       }
     } catch (error) {
-      console.error("加载对话历史失败:", error);
-      alert("加载对话历史失败，请稍后重试");
+      console.error('加载对话历史失败:', error);
+      alert('加载对话历史失败，请稍后重试');
     } finally {
       setIsLoadingHistory(false);
     }
@@ -54,55 +51,54 @@ const Chat = () => {
     if (!newMessage.trim() || isLoading) return;
 
     const userMessage = newMessage.trim();
-    setNewMessage("");
+    setNewMessage('');
     setIsLoading(true);
 
-    // 乐观更新：先显示用户消息，待接口返回后再刷新为真实记录
+    // 临时添加用户消息到界面
     const tempUserMessage = {
       id: Date.now(),
       recommendation_id: parseInt(recommendationId),
       user_message: userMessage,
-      ai_response: "",
+      ai_response: '',
       created_at: new Date().toISOString(),
-      isPending: true,
+      isPending: true
     };
-    setChatHistory((prev) => [...prev, tempUserMessage]);
+    setChatHistory(prev => [...prev, tempUserMessage]);
 
     try {
-      const response = await fetch("http://localhost:3001/chat/send", {
-        method: "POST",
+      const response = await fetch('http://localhost:3001/chat/send', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           recommendation_id: parseInt(recommendationId),
-          user_message: userMessage,
-        }),
+          user_message: userMessage
+        })
       });
 
       const data = await response.json();
 
-      if (data.status === "success") {
+      if (data.status === 'success') {
         // 更新消息历史
         await loadChatHistory();
       } else {
-        alert("发送消息失败：" + data.message);
+        alert('发送消息失败：' + data.message);
         // 移除临时消息
-        setChatHistory((prev) => prev.filter((msg) => !msg.isPending));
+        setChatHistory(prev => prev.filter(msg => !msg.isPending));
       }
     } catch (error) {
-      console.error("发送消息失败:", error);
-      alert("发送消息失败，请稍后重试");
+      console.error('发送消息失败:', error);
+      alert('发送消息失败，请稍后重试');
       // 移除临时消息
-      setChatHistory((prev) => prev.filter((msg) => !msg.isPending));
+      setChatHistory(prev => prev.filter(msg => !msg.isPending));
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleKeyPress = (e) => {
-    // 输入体验：Enter 发送，Shift + Enter 换行
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
@@ -110,12 +106,12 @@ const Chat = () => {
 
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
-    return date.toLocaleString("zh-CN", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
+    return date.toLocaleString('zh-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
 
@@ -155,22 +151,13 @@ const Chat = () => {
             <h3>开始与AI对话</h3>
             <p>关于这篇论文，您有什么问题吗？</p>
             <div className="suggestions">
-              <div
-                className="suggestion-tag"
-                onClick={() => setNewMessage("请总结一下这篇论文的主要贡献")}
-              >
+              <div className="suggestion-tag" onClick={() => setNewMessage('请总结一下这篇论文的主要贡献')}>
                 请总结一下这篇论文的主要贡献
               </div>
-              <div
-                className="suggestion-tag"
-                onClick={() => setNewMessage("这篇论文使用了什么方法？")}
-              >
+              <div className="suggestion-tag" onClick={() => setNewMessage('这篇论文使用了什么方法？')}>
                 这篇论文使用了什么方法？
               </div>
-              <div
-                className="suggestion-tag"
-                onClick={() => setNewMessage("论文的结果如何？")}
-              >
+              <div className="suggestion-tag" onClick={() => setNewMessage('论文的结果如何？')}>
                 论文的结果如何？
               </div>
             </div>
@@ -183,9 +170,7 @@ const Chat = () => {
                 <div className="message-avatar">我</div>
                 <div className="message-content">
                   <div className="message-text">{chat.user_message}</div>
-                  <div className="message-time">
-                    {formatTime(chat.created_at)}
-                  </div>
+                  <div className="message-time">{formatTime(chat.created_at)}</div>
                 </div>
               </div>
 
@@ -205,9 +190,7 @@ const Chat = () => {
                     )}
                   </div>
                   {!chat.isPending && (
-                    <div className="message-time">
-                      {formatTime(chat.created_at)}
-                    </div>
+                    <div className="message-time">{formatTime(chat.created_at)}</div>
                   )}
                 </div>
               </div>
@@ -233,7 +216,7 @@ const Chat = () => {
             disabled={!newMessage.trim() || isLoading}
             className="send-button"
           >
-            {isLoading ? "发送中..." : "发送"}
+            {isLoading ? '发送中...' : '发送'}
           </button>
         </div>
       </div>
